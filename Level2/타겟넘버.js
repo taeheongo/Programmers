@@ -71,4 +71,4 @@ function solution(numbers, target) {
   return answer;
 }
 
-console.log(solution([1, 1, 1, 1, 1], 3)); // expected: 3
+console.log(solution([1, 1, 1, 1, 1], 3)); // expected: 5
