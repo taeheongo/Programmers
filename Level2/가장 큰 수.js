@@ -1,3 +1,4 @@
+// 라이브러리 없이 하지 않는 풀이
 class ArrayList {
   constructor(array) {
     this.array = array;
@@ -71,13 +72,20 @@ function solution(numbers) {
   var answer = "";
 
   let array = new ArrayList(numbers).mergeSort();
-  let isNotAllZero = array.some((elem) => elem !== 0);
+  answer = array.join("");
 
-  if (isNotAllZero) {
-    answer = array.join("");
-  } else {
-    answer = "0";
-  }
+  return answer.startsWith("0") ? "0" : answer;
+}
 
-  return answer;
+// 라아비르러 이용한 풀이
+function solution2(numbers) {
+  const answer = numbers
+    .sort((a, b) => {
+      a = a.toString();
+      b = b.toString();
+      return b + a - (a + b);
+    })
+    .join("");
+
+  return answer.startsWith("0") ? "0" : answer;
 }

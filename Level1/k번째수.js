@@ -1,3 +1,4 @@
+// quick sort를 직접 구현한 풀이
 class ArrayList {
   constructor(array) {
     this.array = array;
@@ -59,6 +60,20 @@ function solution(array, commands) {
   for (let command of commands) {
     let newArray = array.slice(command[0] - 1, command[1]);
     newArray = new ArrayList(newArray).quickSort();
+
+    answer.push(newArray[command[2] - 1]);
+  }
+
+  return answer;
+}
+
+// sort 라이브러리 사용
+function solution2(array, commands) {
+  var answer = [];
+
+  for (let command of commands) {
+    let newArray = array.slice(command[0] - 1, command[1]);
+    newArray.sort((a, b) => a - b);
 
     answer.push(newArray[command[2] - 1]);
   }
