@@ -86,6 +86,6 @@ console.log(
     [3, 6],
     [3, 1],
   ])
-); // Expected 9
+); // Expected 11
 
 // console.log(solution()); // Expected 3
