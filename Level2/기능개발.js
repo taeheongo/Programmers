@@ -1,3 +1,4 @@
+// 내 첫 번째 풀이
 function solution(progresses, speeds) {
   var answer = [];
   const { length } = progresses;
@@ -22,6 +23,25 @@ function solution(progresses, speeds) {
     answer[++j] = 1; // 배포 수 초기화
     i++;
   }
+
+  return answer;
+}
+
+// 좀 더 깔끔한 코드
+function solution(progresses, speeds) {
+  let answer = [];
+
+  let requiredDays = 0;
+  progresses.forEach((p, i) => {
+    p = p + requiredDays * speeds[i]; // 지나간 날만큼 진도율 증가
+
+    if (p >= 100) {
+      answer[answer.length - 1]++;
+    } else {
+      requiredDays += Math.ceil((100 - p) / speeds[i]);
+      answer.push(1);
+    }
+  });
 
   return answer;
 }
