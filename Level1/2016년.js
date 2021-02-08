@@ -11,9 +11,7 @@ function solution(a, b) {
   }
   passedDays += b - 1;
 
-  answer = type[(passedDays + 4) % 7];
+  answer = type[(passedDays + 4) % 7]; // // +3은 +4에서 index니까 -1
 
   return answer;
 }
-
-console.log(solution(1, 1));

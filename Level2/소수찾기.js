@@ -12,6 +12,15 @@ function solution(numbers) {
     }
   }
 
+  // 1 2 3 4 5
+  // {1} 2345
+
+  // 2 3 4 5
+  // {1, 12} 3 4 5
+
+  // 3 4 5
+  // {1, 12, 123}
+
   findNumbers(numbers, possibleNumbers, "");
 
   for (let num of possibleNumbers.values()) {
