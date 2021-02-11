@@ -1,1 +1,1 @@
-console.log("*".repeat(5));
+console.log(1 / 1);
