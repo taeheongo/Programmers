@@ -19,7 +19,7 @@ function gcd(a, b) {
 }
 
 // lcm(a, b) = a * b / gcd(a, b)
-function lcd(a, b) {
+function lcm(a, b) {
   return (a * b) / gcd(a, b);
 }
 
@@ -69,5 +69,4 @@ function lcd(a, b) {
 
         => gcd(B, A-Bq) = 1
         => gcd(B, r) = G
-
 */

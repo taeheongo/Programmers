@@ -1,39 +1,51 @@
-const WHITE = "white";
-const GREY = "grey";
-const BLACK = "black";
+function solution(n, edge) {
+  var answer = 0;
 
-const initializeColor = (vertices) => {
-  let color = {};
+  let graph = new Graph(n);
 
-  for (let v of vertices) {
-    color[v] = WHITE;
+  for (let e of edge) {
+    graph.addEdge(e[0], e[1]);
   }
 
-  return color;
-};
+  let { d, max } = graph.bfs(1, (elem) => console.log(elem));
+  // let {d, max} = graph.dfs(1, (elem)=>console.log(elem)); // 실패.. 원인파악 중...
+  let longgestNodes = [...d.keys()].filter((key) => d.get(key) === max);
+
+  return longgestNodes.length;
+}
+
+const UNVISITED = "UNVISITED";
+const VISITED = "VISITED";
+const COMPLETED = "COMPLETED";
 
 class Queue {
   constructor() {
     this.items = [];
   }
 
-  enqueue(item) {
-    this.items.push(item);
+  enqueue(e) {
+    this.items.push(e);
   }
 
   dequeue() {
     return this.items.shift();
   }
 
-  isEmpty() {
-    return this.items.length === 0;
+  get isNotEmpty() {
+    return !!this.items.length;
   }
 }
 
 class Graph {
-  constructor() {
-    this.vertices = []; // 노드들
-    this.adjList = new Map(); // 간선들
+  constructor(n) {
+    this.vertices = [];
+    this.adjList = new Map();
+    this.max = 0;
+    this.reservated = new Set();
+
+    for (let i = 1; i <= n; i++) {
+      this.addVertex(i);
+    }
   }
 
   addVertex(v) {
@@ -43,73 +55,95 @@ class Graph {
 
   addEdge(v, w) {
     this.adjList.get(v).push(w);
-    this.adjList.get(w).push(v); // 무방향 그래프
+    this.adjList.get(w).push(v);
+  }
+
+  _initState() {
+    let state = new Map();
+    for (let v of this.vertices) {
+      state.set(v, UNVISITED);
+    }
+
+    return state;
   }
 
   bfs(v, callback) {
-    const color = initializeColor(this.vertices);
-    const queue = new Queue();
-    queue.enqueue([v]);
-    color[v] = GREY;
-    let vByDistance = [];
+    let queue = new Queue();
+    queue.enqueue(v);
+    const state = this._initState();
+    state.set(v, VISITED);
+    let d = new Map(); // distances from 1
+    let max = 0;
 
-    while (!queue.isEmpty()) {
-      let vArr = queue.dequeue();
-      let newArray = [];
+    for (let vert of this.vertices) {
+      d.set(vert, 0);
+    }
 
-      for (let w of vArr) {
-        for (let key of this.adjList.get(w)) {
-          if (color[key] === WHITE) {
-            color[key] = GREY;
-            newArray.push(key);
-          }
+    while (queue.isNotEmpty) {
+      let u = queue.dequeue();
+      let neighbors = this.adjList.get(u);
+
+      for (let n of neighbors) {
+        if (state.get(n) === UNVISITED) {
+          queue.enqueue(n);
+          state.set(n, VISITED);
+          d.set(n, d.get(u) + 1);
         }
-
-        color[w] = BLACK;
       }
-      if (newArray.length !== 0) {
-        queue.enqueue(newArray);
-        vByDistance.push(newArray);
-        // console.log(newArray);
+
+      state.set(u, COMPLETED);
+      if (callback && typeof callback === "function") {
+        callback(u);
+      }
+      max = d.get(u);
+    }
+
+    return {
+      d,
+      max,
+    };
+  }
+
+  dfs(u, callback) {
+    const state = this._initState();
+    const d = new Map();
+    const reservated = new Set();
+    reservated.add(u);
+
+    for (let v of this.vertices) {
+      d.set(v, 0);
+    }
+
+    this._dfsVisit(u, d, state, callback, reservated);
+
+    return {
+      d,
+      max: this.max,
+    };
+  }
+
+  _dfsVisit(v, d, state, callback, reservated) {
+    const neighbors = this.adjList.get(v);
+    state.set(v, VISITED);
+    this.max = this.max > d.get(v) ? this.max : d.get(v);
+
+    if (callback && typeof callback === "function") {
+      callback(`${v} ${d.get(v)}`);
+    }
+
+    let newReservated = new Set();
+
+    for (let n of [...neighbors.values()]) {
+      newReservated.add(n);
+    }
+
+    for (let n of neighbors) {
+      if (state.get(n) === UNVISITED && !reservated.has(n)) {
+        d.set(n, d.get(v) + 1);
+        this._dfsVisit(n, d, state, callback, newReservated);
       }
     }
 
-    callback(vByDistance[vByDistance.length - 1].length);
+    state.set(v, COMPLETED);
   }
-
-  dfs(v) {}
 }
-
-function solution(n, edge) {
-  var answer = 0;
-
-  const graph = new Graph();
-  // 노드 추가
-  for (let i = 0; i < n; i++) {
-    graph.addVertex(i + 1);
-  }
-
-  // 간선 추가
-  for (let i = 0; i < edge.length; i++) {
-    graph.addEdge(edge[i][0], edge[i][1]);
-  }
-  console.log(graph);
-
-  graph.bfs(graph.vertices[0], (vByDistance) => {
-    answer = vByDistance;
-  });
-
-  return answer;
-}
-
-console.log(
-  solution(6, [
-    [3, 6],
-    [4, 3],
-    [3, 2],
-    [1, 3],
-    [1, 2],
-    [2, 4],
-    [5, 2],
-  ])
-); // expected: 3
